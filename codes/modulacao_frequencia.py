@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import hilbert
 
 # Parâmetros    
-fs = 10000
-duracao = 0.1
-t = np.arange(0, duracao, 1/fs)
+fs = 50000.0 # 50kHz
+T = 1.0/fs
+t = np.arange(0, 0.05, T)
 
 # Sinal modulante
 Am = 8
@@ -22,13 +23,13 @@ signal_dsb_sc = m * carrier
 # AM-DSB
 signal_dsb = m*carrier + carrier
 
-# Modulação PM
-Kp = 0.5 # arbitrario
-carrier_phase = 2 * np.pi * Fc * t
-signal_pm = Ac * np.cos(carrier_phase + Kp * m)
+# Modulação AM-SSB - Transformada de Hilbert
+m_hat = np.imag(np.asarray(hilbert(m))) # transformada de Hilbert de m(t)
+# USB: m(t)cos(wc t) - m_hat(t)sin(wc t)
+signal_ssb = m*carrier - m_hat*Ac*np.sin(2*np.pi*Fc*t)
 
 # Modulação FM
-Kf = 500
+Kf = 50
 b = Kf*Am/fm
 signal_fm = Ac * np.cos(2*np.pi*Fc*t + b*np.sin(2*np.pi*fm*t))
 
@@ -43,7 +44,7 @@ def fourier(signal, fs):
 
 moduled_am_dsb_sc_freqs, moduled_am_dsb_sc_magnitude = fourier(signal_dsb_sc, fs)
 moduled_amdsb_freqs, moduled_amdsb_magnitude = fourier(signal_dsb, fs)
-moduled_pm_freqs, moduled_pm_magnitude = fourier(signal_pm, fs)
+moduled_ssb_freqs, moduled_ssb_magnitude = fourier(signal_ssb, fs)
 moduled_fm_freqs, moduled_fm_magnitude = fourier(signal_fm, fs)
 
 # Plotagem
@@ -65,9 +66,9 @@ axs[1][0].set_ylabel('Magnitude')
 axs[1][0].grid(True)
 axs[1][0].legend(loc='upper right')
 
-# PM
-axs[0][1].plot(moduled_pm_freqs, moduled_pm_magnitude, label='Sinal Modulado PM', color='darkorange')
-axs[0][1].set_title(f'Espectro PM (Fc={Fc}Hz, fm={fm}Hz, Kp={Kp})')
+# AM-SSB
+axs[0][1].plot(moduled_ssb_freqs, moduled_ssb_magnitude, label='Sinal Modulado AM-SSB (USB)', color='darkorange')
+axs[0][1].set_title(f'Espectro AM-SSB (Fc={Fc}Hz, fm={fm}Hz)')
 axs[0][1].set_xlabel('Frequência (Hz)')
 axs[0][1].set_ylabel('Magnitude')
 axs[0][1].grid(True)
@@ -87,4 +88,4 @@ fig.suptitle(
     fontsize=14, fontweight='bold'
 )
 plt.tight_layout()
-plt.show()  
+plt.show()
