@@ -46,8 +46,8 @@ A função `fourier(signal, fs)` centraliza o espectro em 0 Hz (`fftshift`) e no
 | `fm` | 200 Hz | Frequência do sinal modulante |
 | `Ac` | 1 | Amplitude da portadora |
 | `Fc` | 1000 Hz | Frequência da portadora |
-| `Kp` | 0.5 | Constante de sensibilidade de fase (PM, em `modulacao_tempo.py`) |
-| `Kf` | 500 | Constante de sensibilidade de frequência (FM) |
+| `Kp` | 0.2 | Constante de sensibilidade de fase (PM, em `modulacao_tempo.py`) |
+| `Kf` | 50 | Constante de sensibilidade de frequência (FM) |
 
 ## Observação técnica
 
