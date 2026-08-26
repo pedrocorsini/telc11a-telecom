@@ -1,6 +1,6 @@
 # TELC11A - Lab Telecomunicações 1
 
-Repositório com implementações em Python de técnicas clássicas de modulação analógica, desenvolvidas para a disciplina de TELC11A - Laboratório de Telecomunicações 1 (UNIFEI). Os scripts geram e analisam sinais modulados em **AM-DSB-SC**, **AM-DSB**, **PM** e **FM**, tanto no domínio do tempo quanto no domínio da frequência.
+Repositório com implementações em Python de técnicas clássicas de modulação analógica, desenvolvidas para a disciplina de TELC11A - Laboratório de Telecomunicações 1 (UNIFEI). Os scripts geram e analisam sinais modulados em **AM-DSB-SC**, **AM-DSB**, **PM**, **FM** e **AM-SSB**, tanto no domínio do tempo quanto no domínio da frequência.
 
 ## Estrutura
 
@@ -13,7 +13,7 @@ codes/
 ## Requisitos
 
 ```bash
-pip install numpy matplotlib
+pip install numpy matplotlib scipy
 ```
 
 ## Scripts
@@ -32,7 +32,7 @@ Calcula e plota o espectro (magnitude via FFT) de quatro sinais modulados a part
 
 - **AM-DSB-SC** — `s(t) = m(t)·carrier(t)`
 - **AM-DSB** — `s(t) = m(t)·carrier(t) + carrier(t)`
-- **PM** — `s(t) = Ac·cos(ωc t + Kp·m(t))`
+- **AM-SSB** — `s(t) = m(t)·cos(ωc t) - m̂(t)·sin(ωc t)`, onde `m̂(t)` é a Transformada de Hilbert de `m(t)` (obtida via `scipy.signal.hilbert`), gerando a banda lateral única superior (USB)
 - **FM** — `s(t) = Ac·cos(ωc t + β·sin(ωm t))`
 
 A função `fourier(signal, fs)` centraliza o espectro em 0 Hz (`fftshift`) e normaliza a magnitude pelo número de amostras.
@@ -46,12 +46,14 @@ A função `fourier(signal, fs)` centraliza o espectro em 0 Hz (`fftshift`) e no
 | `fm` | 200 Hz | Frequência do sinal modulante |
 | `Ac` | 1 | Amplitude da portadora |
 | `Fc` | 1000 Hz | Frequência da portadora |
-| `Kp` | 0.5 | Constante de sensibilidade de fase (PM) |
+| `Kp` | 0.5 | Constante de sensibilidade de fase (PM, em `modulacao_tempo.py`) |
 | `Kf` | 500 | Constante de sensibilidade de frequência (FM) |
 
 ## Observação técnica
 
 Com `Am=8` e `Ac=1`, o índice de modulação do AM-DSB é `μ = Am/Ac = 8`, caracterizando **sobremodulação severa** — a envoltória do sinal assume valores negativos, o que inviabilizaria a demodulação por detector de envoltória simples, ainda que o espectro (FFT) apresente corretamente as três componentes esperadas (`±(Fc-fm)`, `±Fc`, `±(Fc+fm)`).
+
+No AM-SSB, o espectro apresenta apenas uma raia de cada lado de `Fc` (banda lateral superior), eliminando a redundância espectral presente no AM-DSB e no AM-DSB-SC.
 
 ## Como executar
 
